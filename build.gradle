@@ -11,6 +11,26 @@ vaadin {
 }
 
 repositories {
+    jcenter()
     vaadin.prereleases()
     vaadin.addons()
+}
+
+dependencies {
+    implementation vaadin.bom()
+    implementation vaadin.platform()
+    
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'org.webjars.bowergithub.polymerelements:app-layout:2.1.1'
+    compile 'org.webjars.bowergithub.polymerelements:iron-icons:2.1.1'
+    compile 'org.webjars.bowergithub.polymerelements:paper-icon-button:2.2.0'
+    compile 'org.webjars.bowergithub.polymerelements:paper-tabs:2.1.1'
+    compile 'org.webjars.bowergithub.jifalops:iron-collapse-button:1.0.1'
+    compile 'org.webjars.bowergithub.oyeharry:app-menu:2.1.2'
+    compile 'org.webjars.bowergithub.polymerelements:paper-card:2.1.0'
+    compile 'org.webjars.bowergithub.polymerelements:paper-badge:2.1.0'
+    compile 'org.webjars.bowergithub.polymerelements:paper-ripple:2.1.1'
+    compile 'org.ocpsoft.prettytime:prettytime:4.0.2.Final'
+    compile 'com.github.appreciated:paper-ripple:1.0'
+    compile 'com.github.appreciated:vaadin-paper-menu-button:0.9.0'
 }
