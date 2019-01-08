@@ -4,6 +4,7 @@ import static com.github.appreciated.app.layout.entity.Section.FOOTER;
 import static com.github.appreciated.app.layout.entity.Section.HEADER;
 import static com.github.appreciated.app.layout.notification.entitiy.Priority.MEDIUM;
 
+import com.example.vaadindemo.component.BehaviourSelector;
 import com.github.appreciated.app.layout.behaviour.AppLayout;
 import com.github.appreciated.app.layout.behaviour.Behaviour;
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder;
@@ -22,15 +23,10 @@ import com.github.appreciated.app.layout.notification.component.AppBarNotificati
 import com.github.appreciated.app.layout.notification.entitiy.DefaultNotification;
 import com.github.appreciated.app.layout.notification.entitiy.Priority;
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
-import java.util.function.Consumer;
 
 /**
  * The main view contains a button and a template element.
@@ -41,8 +37,8 @@ import java.util.function.Consumer;
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 public class VaadinDemoMainLayout extends AppLayoutRouterLayout {
 
-    DefaultNotificationHolder notificationHolder;
-    DefaultBadgeHolder badgeHolder;
+    private DefaultNotificationHolder notificationHolder;
+    private DefaultBadgeHolder badgeHolder;
     private Behaviour variant;
     private Thread currentThread;
 
@@ -63,72 +59,82 @@ public class VaadinDemoMainLayout extends AppLayoutRouterLayout {
 
             notificationHolder.bind(home.getBadge());
             badgeHolder.bind(menu.getBadge());
-            return AppLayoutBuilder
-                    .get(variant)
-                    .withTitle("Vaadin Demo")
-                    .withIcon("frontend/images/logo.png")
-                    .withAppBar(AppBarBuilder
-                            .get()
-                            .add(new AppBarNotificationButton(VaadinIcon.BELL, notificationHolder))
-                            .build())
-                    .withAppMenu(LeftAppMenuBuilder
-                            .get()
-                            .addToSection(new MenuHeaderComponent("Vaadin Demo",
-                                    "Version 0.0.1",
-                                    "frontend/images/logo.png"
-                            ), HEADER)
-                            .addToSection(new LeftClickableComponent("Set Behaviour HEADER",
-                                    VaadinIcon.COG.create(),
-                                    clickEvent -> openModeSelector(variant)
-                            ), HEADER)
-                            .add(home)
-                            .add(new LeftNavigationComponent("Grid", VaadinIcon.TABLE.create(),
-                                    VaadinDemoGrid.class))
-                            .add(LeftSubMenuBuilder
-                                    .get("My Submenu", VaadinIcon.PLUS.create())
-                                    .add(new LeftNavigationComponent("Contact",
-                                            VaadinIcon.CONNECT.create(),
-                                            VaadinDemoContact.class
-                                    ))
-                                    .add(new LeftNavigationComponent("More", VaadinIcon.COG.create(),
-                                            VaadinDemoMore.class))
-                                    .build())
-                            .add(menu)
-                            .addToSection(new LeftClickableComponent("Set Behaviour FOOTER",
-                                    VaadinIcon.COG.create(),
-                                    clickEvent -> openModeSelector(variant)
-                            ), FOOTER)
-                            .build())
-                    .build();
+
+            return createAppLayout(home, menu);
         } else {
-            return AppLayoutBuilder
-                    .get(variant)
-                    .withTitle("Vaadin Demo Top")
-                    .withAppBar(AppBarBuilder
-                            .get()
-                            .add(new AppBarNotificationButton(VaadinIcon.BELL, notificationHolder))
-                            .build())
-                    .withAppMenu(TopAppMenuBuilder
-                            .get()
-                            .addToSection(new TopClickableComponent("Set Behaviour 1",
-                                    VaadinIcon.COG.create(),
-                                    clickEvent -> openModeSelector(variant)
-                            ), HEADER)
-                            .add(new TopNavigationComponent("Home", VaadinIcon.HOME.create(), VaadinDemoHome.class))
-                            .add(new TopNavigationComponent("Contact", VaadinIcon.SPLINE_CHART.create(),
-                                    VaadinDemoContact.class))
-                            .addToSection(new TopClickableComponent("Set Behaviour 2",
-                                    VaadinIcon.COG.create(),
-                                    clickEvent -> openModeSelector(variant)
-                            ), FOOTER)
-                            .addToSection(
-                                    new TopNavigationComponent("More", VaadinIcon.CONNECT.create(),
-                                            VaadinDemoMore.class),
-                                    FOOTER
-                            )
-                            .build())
-                    .build();
+            return createAppLayoutTop();
         }
+    }
+
+    private AppLayout createAppLayout(LeftNavigationComponent home, LeftNavigationComponent menu) {
+        AppBarNotificationButton appBarNotificationButton = new AppBarNotificationButton(VaadinIcon.BELL,
+                notificationHolder);
+        MenuHeaderComponent menuHeaderComponent = new MenuHeaderComponent("Vaadin Demo", "Version 0.0.1",
+                "frontend/images/logo.png");
+
+        LeftClickableComponent behaviourHeader = new LeftClickableComponent("Set Behaviour HEADER",
+                VaadinIcon.COG.create(), clickEvent -> openModeSelector(variant));
+        LeftClickableComponent behaviourFooter = new LeftClickableComponent("Set Behaviour FOOTER",
+                VaadinIcon.COG.create(), clickEvent -> openModeSelector(variant));
+
+        LeftNavigationComponent grid = new LeftNavigationComponent("Grid", VaadinIcon.TABLE.create(),
+                VaadinDemoGrid.class);
+        LeftNavigationComponent contact = new LeftNavigationComponent("Contact", VaadinIcon.CONNECT.create(),
+                VaadinDemoContact.class);
+        LeftNavigationComponent more = new LeftNavigationComponent("More", VaadinIcon.COG.create(),
+                VaadinDemoMore.class);
+
+        return AppLayoutBuilder
+                .get(variant)
+                .withTitle("Vaadin Demo")
+                .withIcon("frontend/images/logo.png")
+                .withAppBar(AppBarBuilder.get().add(appBarNotificationButton).build())
+                .withAppMenu(LeftAppMenuBuilder
+                        .get()
+                        .addToSection(menuHeaderComponent, HEADER)
+                        .addToSection(behaviourHeader, HEADER)
+                        .add(home)
+                        .add(grid)
+                        .add(LeftSubMenuBuilder.get("My Submenu", VaadinIcon.PLUS.create()).add(contact).add(more)
+                                .build())
+                        .add(menu)
+                        .addToSection(behaviourFooter, FOOTER)
+                        .build())
+                .build();
+    }
+
+    private AppLayout createAppLayoutTop() {
+        AppBarNotificationButton appBarNotificationButton = new AppBarNotificationButton(VaadinIcon.BELL,
+                notificationHolder);
+
+        TopClickableComponent behaviour1 = new TopClickableComponent("Set Behaviour 1", VaadinIcon.COG.create(),
+                clickEvent -> openModeSelector(variant));
+        TopClickableComponent behaviour2 = new TopClickableComponent("Set Behaviour 2", VaadinIcon.COG.create(),
+                clickEvent -> openModeSelector(variant));
+
+        TopNavigationComponent home = new TopNavigationComponent("Home", VaadinIcon.HOME.create(),
+                VaadinDemoHome.class);
+        TopNavigationComponent contact = new TopNavigationComponent("Contact", VaadinIcon.SPLINE_CHART.create(),
+                VaadinDemoContact.class);
+        TopNavigationComponent more = new TopNavigationComponent("More", VaadinIcon.CONNECT.create(),
+                VaadinDemoMore.class);
+
+        return AppLayoutBuilder
+                .get(variant)
+                .withTitle("Vaadin Demo Top")
+                .withAppBar(AppBarBuilder
+                        .get()
+                        .add(appBarNotificationButton)
+                        .build())
+                .withAppMenu(TopAppMenuBuilder
+                        .get()
+                        .addToSection(behaviour1, HEADER)
+                        .add(home)
+                        .add(contact)
+                        .addToSection(behaviour2, FOOTER)
+                        .addToSection(more, FOOTER)
+                        .build())
+                .build();
     }
 
     private void reloadNotifications() {
@@ -156,12 +162,11 @@ public class VaadinDemoMainLayout extends AppLayoutRouterLayout {
     }
 
     private void addNotification(Priority priority) {
-        notificationHolder.addNotification(new DefaultNotification(
-                "Title" + badgeHolder.getCount(),
-                "Description ..............................................."
-                        + badgeHolder.getCount(),
-                priority
-        ));
+        notificationHolder.addNotification(
+                new DefaultNotification("Title" + badgeHolder.getCount(),
+                        "Description ..............................................."
+                                + badgeHolder.getCount(),
+                        priority));
     }
 
     private void setDrawerVariant(Behaviour variant) {
@@ -171,36 +176,5 @@ public class VaadinDemoMainLayout extends AppLayoutRouterLayout {
 
     private void openModeSelector(Behaviour variant) {
         new BehaviourSelector(variant, this::setDrawerVariant).open();
-    }
-
-    class BehaviourSelector extends Dialog {
-
-        public BehaviourSelector(Behaviour current, Consumer<Behaviour> consumer) {
-            VerticalLayout layout = new VerticalLayout();
-            add(layout);
-            RadioButtonGroup<Behaviour> group = new RadioButtonGroup<>();
-            group.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
-            group.setItems(Behaviour.LEFT,
-                    Behaviour.LEFT_OVERLAY,
-                    Behaviour.LEFT_RESPONSIVE,
-                    Behaviour.LEFT_HYBRID,
-                    Behaviour.LEFT_HYBRID_SMALL,
-                    Behaviour.LEFT_RESPONSIVE_HYBRID,
-                    Behaviour.LEFT_RESPONSIVE_HYBRID_NO_APP_BAR,
-                    Behaviour.LEFT_RESPONSIVE_HYBRID_OVERLAY_NO_APP_BAR,
-                    Behaviour.LEFT_RESPONSIVE_OVERLAY,
-                    Behaviour.LEFT_RESPONSIVE_OVERLAY_NO_APP_BAR,
-                    Behaviour.LEFT_RESPONSIVE_SMALL,
-                    Behaviour.LEFT_RESPONSIVE_SMALL_NO_APP_BAR,
-                    Behaviour.TOP,
-                    Behaviour.TOP_LARGE
-            );
-            group.setValue(current);
-            layout.add(group);
-            group.addValueChangeListener(singleSelectionEvent -> {
-                consumer.accept(singleSelectionEvent.getValue());
-                close();
-            });
-        }
     }
 }
