@@ -1,20 +1,17 @@
-package com.example.vaadindemo;
+package com.example.vaadindemo.view;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-/**
- * The main view of the application
- */
-@Route(value = "", layout = MainLayout.class)
-public class VaadinDemoView extends VerticalLayout {
+@Route(value = "", layout = VaadinDemoMainLayout.class)
+public class VaadinDemoHome extends VerticalLayout {
 
-    public VaadinDemoView() {
+    public VaadinDemoHome() {
         setClassName("app-view");
 
-        Label hello = new Label("Hello Gradle app!");
+        Label hello = new Label("Hello Vaadin Demo!");
         add(hello);
 
         Button button = new Button("Click me", event -> {

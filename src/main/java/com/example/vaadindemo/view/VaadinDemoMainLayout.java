@@ -1,4 +1,4 @@
-package com.example.vaadindemo;
+package com.example.vaadindemo.view;
 
 import static com.github.appreciated.app.layout.entity.Section.FOOTER;
 import static com.github.appreciated.app.layout.entity.Section.HEADER;
@@ -29,6 +29,7 @@ import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import java.util.function.Consumer;
 
 /**
@@ -38,7 +39,7 @@ import java.util.function.Consumer;
 @Push
 @BodySize(height = "100vh", width = "100vw")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
-public class MainLayout extends AppLayoutRouterLayout {
+public class VaadinDemoMainLayout extends AppLayoutRouterLayout {
 
     DefaultNotificationHolder notificationHolder;
     DefaultBadgeHolder badgeHolder;
@@ -56,64 +57,41 @@ public class MainLayout extends AppLayoutRouterLayout {
 
         if (!variant.isTop()) {
             LeftNavigationComponent home = new LeftNavigationComponent("Home", VaadinIcon.HOME.create(),
-                    VaadinDemoView.class);
+                    VaadinDemoHome.class);
             LeftNavigationComponent menu = new LeftNavigationComponent("Menu", VaadinIcon.MENU.create(),
-                    VaadinDemoView.class);
+                    VaadinDemoMenu.class);
 
             notificationHolder.bind(home.getBadge());
             badgeHolder.bind(menu.getBadge());
             return AppLayoutBuilder
                     .get(variant)
-                    .withTitle("App Layout")
-                    .withIcon("/frontend/images/logo.png")
+                    .withTitle("Vaadin Demo")
+                    .withIcon("frontend/images/logo.png")
                     .withAppBar(AppBarBuilder
                             .get()
                             .add(new AppBarNotificationButton(VaadinIcon.BELL, notificationHolder))
                             .build())
                     .withAppMenu(LeftAppMenuBuilder
                             .get()
-                            .addToSection(new MenuHeaderComponent("App-Layout",
-                                    "Version 2.0.2",
-                                    "/frontend/images/logo.png"
+                            .addToSection(new MenuHeaderComponent("Vaadin Demo",
+                                    "Version 0.0.1",
+                                    "frontend/images/logo.png"
                             ), HEADER)
                             .addToSection(new LeftClickableComponent("Set Behaviour HEADER",
                                     VaadinIcon.COG.create(),
                                     clickEvent -> openModeSelector(variant)
                             ), HEADER)
                             .add(home)
-                            .add(new LeftNavigationComponent("Grid", VaadinIcon.TABLE.create(), VaadinDemoView.class))
+                            .add(new LeftNavigationComponent("Grid", VaadinIcon.TABLE.create(),
+                                    VaadinDemoGrid.class))
                             .add(LeftSubMenuBuilder
                                     .get("My Submenu", VaadinIcon.PLUS.create())
-                                    .add(LeftSubMenuBuilder
-                                            .get("My Submenu", VaadinIcon.PLUS.create())
-                                            .add(new LeftNavigationComponent("Charts",
-                                                    VaadinIcon.SPLINE_CHART.create(),
-                                                    VaadinDemoView.class
-                                            ))
-                                            .add(new LeftNavigationComponent("Contact",
-                                                    VaadinIcon.CONNECT.create(),
-                                                    VaadinDemoView.class
-                                            ))
-                                            .add(new LeftNavigationComponent("More",
-                                                    VaadinIcon.COG.create(),
-                                                    VaadinDemoView.class
-                                            ))
-                                            .build())
-                                    .add(new LeftNavigationComponent("Contact1",
+                                    .add(new LeftNavigationComponent("Contact",
                                             VaadinIcon.CONNECT.create(),
-                                            VaadinDemoView.class
+                                            VaadinDemoContact.class
                                     ))
-                                    .add(new LeftNavigationComponent("More1", VaadinIcon.COG.create(),
-                                            VaadinDemoView.class))
-                                    .build())
-                            .add(LeftSubMenuBuilder
-                                    .get("My Submenu", VaadinIcon.PLUS.create())
-                                    .add(new LeftNavigationComponent("Contact2",
-                                            VaadinIcon.CONNECT.create(),
-                                            VaadinDemoView.class
-                                    ))
-                                    .add(new LeftNavigationComponent("More2", VaadinIcon.COG.create(),
-                                            VaadinDemoView.class))
+                                    .add(new LeftNavigationComponent("More", VaadinIcon.COG.create(),
+                                            VaadinDemoMore.class))
                                     .build())
                             .add(menu)
                             .addToSection(new LeftClickableComponent("Set Behaviour FOOTER",
@@ -125,7 +103,7 @@ public class MainLayout extends AppLayoutRouterLayout {
         } else {
             return AppLayoutBuilder
                     .get(variant)
-                    .withTitle("App Layout")
+                    .withTitle("Vaadin Demo Top")
                     .withAppBar(AppBarBuilder
                             .get()
                             .add(new AppBarNotificationButton(VaadinIcon.BELL, notificationHolder))
@@ -136,28 +114,22 @@ public class MainLayout extends AppLayoutRouterLayout {
                                     VaadinIcon.COG.create(),
                                     clickEvent -> openModeSelector(variant)
                             ), HEADER)
-                            .add(new TopNavigationComponent("Home", VaadinIcon.HOME.create(), VaadinDemoView.class))
+                            .add(new TopNavigationComponent("Home", VaadinIcon.HOME.create(), VaadinDemoHome.class))
                             .add(new TopNavigationComponent("Contact", VaadinIcon.SPLINE_CHART.create(),
-                                    VaadinDemoView.class))
+                                    VaadinDemoContact.class))
                             .addToSection(new TopClickableComponent("Set Behaviour 2",
                                     VaadinIcon.COG.create(),
                                     clickEvent -> openModeSelector(variant)
                             ), FOOTER)
                             .addToSection(
                                     new TopNavigationComponent("More", VaadinIcon.CONNECT.create(),
-                                            VaadinDemoView.class),
+                                            VaadinDemoMore.class),
                                     FOOTER
                             )
                             .build())
                     .build();
         }
     }
-
-  /*@Override
-  protected void onAttach(AttachEvent attachEvent) {
-    super.onAttach(attachEvent);
-    getUI().get().getPage().executeJavaScript("document.documentElement.setAttribute(\"theme\",\"dark\")");
-  }*/
 
     private void reloadNotifications() {
         if (currentThread != null && !currentThread.isInterrupted()) {
@@ -207,14 +179,7 @@ public class MainLayout extends AppLayoutRouterLayout {
             VerticalLayout layout = new VerticalLayout();
             add(layout);
             RadioButtonGroup<Behaviour> group = new RadioButtonGroup<>();
-            group
-                    .getElement()
-                    .getStyle()
-                    .set("display", "flex");
-            group
-                    .getElement()
-                    .getStyle()
-                    .set("flexDirection", "column");
+            group.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
             group.setItems(Behaviour.LEFT,
                     Behaviour.LEFT_OVERLAY,
                     Behaviour.LEFT_RESPONSIVE,
