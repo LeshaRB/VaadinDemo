@@ -7,7 +7,7 @@ A small example of working with Vaadin 12.0.0, Gradle and Greety
 * Java 8
 
 # Build project
-./gralew clean build
+./gradlew clean build
 
 # Run project
 ./gradlew jettyRun
